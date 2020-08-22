@@ -6,6 +6,7 @@
   "scripts": {
     "start": "parcel serve ./public/index.html",
     "build": "parcel build ./public/index.html",
+    "watch": "parcel watch ./public/index.html",
     "lint": "eslint './src/**/*.{js,ts,tsx}'",
     "lint:fix": "eslint --fix './src/**/*.{js,ts,tsx}'"
   },
