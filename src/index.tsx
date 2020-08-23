@@ -2,6 +2,13 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 
+enum GameStatus {
+  O = 'O',
+  X = 'X',
+  Draw = 'DRAW',
+  Running = 'RUNNING',
+}
+
 function Square(props) {
   return (
     <button className="square" onClick={props.onClick} >
@@ -58,8 +65,9 @@ class Game extends React.Component {
     const history = this.state.history.slice(0, this.state.stepNumber + 1);
     const current = history[history.length - 1];
     const squares = current.squares.slice();
+    const gameStatus = calculateGameStatus(squares);
 
-    if (calculateWinner(squares) || squares[i]) {
+    if (gameStatus === GameStatus.O || gameStatus == GameStatus.X || squares[i]) {
       return;
     }
     squares[i] = this.state.xIsNext ? 'X' : 'O';
@@ -82,7 +90,6 @@ class Game extends React.Component {
   render() {
     const history = this.state.history;
     const current = history[this.state.stepNumber];
-    const winner = calculateWinner(current.squares);
 
     const moves = history.map((step, move) => {
       const desc = move ?
@@ -95,11 +102,29 @@ class Game extends React.Component {
       );
     });
 
+    const gameStatus = calculateGameStatus(current.squares);
+
     let status: string;
-    if (winner) {
-      status = 'Winner: ' + winner;
-    } else {
-      status = 'Next player: ' + (this.state.xIsNext ? 'X' : 'O');
+    switch (gameStatus) {
+      case GameStatus.O: {
+        status = 'Winner: O';
+        break;
+      }
+      case GameStatus.X: {
+        status = 'Winner: X';
+        break;
+      }
+      case GameStatus.Running: {
+        status = 'Next player: ' + (this.state.xIsNext ? 'X' : 'O');
+        break;
+      }
+      case GameStatus.Draw: {
+        status = "Draw Game!"
+        break;
+      }
+      default: {
+        break;
+      }
     }
 
     return (
@@ -128,7 +153,7 @@ ReactDOM.render(
 
 // ========================================
 
-function calculateWinner(squares) {
+function calculateGameStatus(squares): GameStatus {
   const lines = [
     [0, 1, 2],
     [3, 4, 5],
@@ -139,11 +164,19 @@ function calculateWinner(squares) {
     [0, 4, 8],
     [2, 4, 6],
   ];
+
   for (let line of lines) {
     const [a, b, c] = line;
     if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
       return squares[a];
     }
   }
-  return null;
+
+  for (let x of squares) {
+    if (x === null) {
+      return GameStatus.Running;
+    }
+  }
+
+  return GameStatus.Draw;
 }
