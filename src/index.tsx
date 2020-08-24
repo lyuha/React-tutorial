@@ -99,12 +99,13 @@ class Game extends React.Component {
     const current = history[this.state.stepNumber];
 
     const unorderedMove = history.map((step, move) => {
+      const isCurrentStep = (move === this.state.stepNumber);
       const desc = move ?
         'Go to move #' + move :
         'Go to game start';
       return (
         <li key={move}>
-          <button onClick={() => this.jumpTo(move)}>{desc}</button>
+          <button onClick={() => this.jumpTo(move)} style={isCurrentStep ? { backgroundColor: '#FFFF00' } : null}>{desc}</button>
         </li>
       );
     });
