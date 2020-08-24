@@ -58,6 +58,7 @@ class Game extends React.Component {
       }],
       stepNumber: 0,
       xIsNext: true,
+      isAscendingOrder: true,
     }
   }
 
@@ -87,11 +88,17 @@ class Game extends React.Component {
     });
   }
 
+  reverseHistory() {
+    this.setState({
+      isAscendingOrder: !this.state.isAscendingOrder,
+    });
+  }
+
   render() {
     const history = this.state.history;
     const current = history[this.state.stepNumber];
 
-    const moves = history.map((step, move) => {
+    const unorderedMove = history.map((step, move) => {
       const desc = move ?
         'Go to move #' + move :
         'Go to game start';
@@ -101,6 +108,8 @@ class Game extends React.Component {
         </li>
       );
     });
+
+    const moves = this.state.isAscendingOrder ? unorderedMove : unorderedMove.reverse();
 
     const gameStatus = calculateGameStatus(current.squares);
 
@@ -137,6 +146,7 @@ class Game extends React.Component {
         </div>
         <div className="game-info">
           <div>{status}</div>
+          <button onClick={() => { this.reverseHistory() }}>Reverse history</button>
           <ol>{moves}</ol>
         </div>
       </div>
